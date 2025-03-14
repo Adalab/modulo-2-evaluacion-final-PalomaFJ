@@ -1,6 +1,6 @@
 'use strict';
 
-// Para empezar voy a seleccionar los elementos del html que necesito para cuando la usuaria haga click en buscar, por lo que voy a querer crear un evento de tipo click que suceda sobre el boton buscar: entonces voy a recoger el formulario, el input y el boton buscar.
+// Para empezar voy a seleccionar los elementos del html que necesito para cuando la usuaria haga click en buscar, por lo que voy a querer crear un evento de tipo click que suceda sobre el boton buscar: entonces voy a recoger el formulario, el input para buscar y el boton buscar.
 const form = document.querySelector(".js-form");
 const input = document.querySelector(".js-search-input");
 const searchBtn = document.querySelector(".js-search-btn");
@@ -39,7 +39,26 @@ function handleSearch(event) {
 
     fetchAnime(searchText); //Aquí llamo a esta funcion y le paso como parámetro el texto que haya escrito, o sea la peli que este buscando. Vamos que stas dos funciones trabajan juntas para hacer la busqueda de la usuaria.
 }
+// Ahora quiero mostrar los resultados en la pantalla y como ya tengo los datos del API voy a pintarlos en la web. Quiero que cada peli tenga su imagen y su titulo. Tambien quiero que no se pinte una peli encima de otra en el div de resultado, o sea que se limpie entre una busqueda y otra.
 
 
+// Ahora voy a selecionar el contenedor donde voy a mostrar el resultado. Que es el div con la clase js-results asi que lo recojo en una variable const que voy a llamar resultContainer. Y ahí es donde apareceran las pelis cuando la usuaria busque.
+const resultsContainer = document.querySelector(".js-results");
 
+// Ahora voy a crear una funcion a la que voy a llamar renderAnimeList, para que pinte las pelis  y le añadiré el parámetro animeList(que será la lista de pelis que me dió la API) Osea, que renderAnimeList es la funcion que quiero que me pinte la peli buscada.
+function renderAnimeList(animeList) {
+    resultsContainer.innerHTML = ""; // Esto lo hago para limpiar el div donde muestro los reultados de la busqueda. O sea, que si busco la peli patata se mostrará la peli patata, pero si luego busco la peli tomate gracias a esto se borra el resultado de patata y ya aparece el de tomate. y así no se me pone una peli encima de otra.
 
+// Ahora voy a usar un bucle for of porque necesito recorrer cada peli una por una para poder pintarla en la web cuando la usuaria la busque. o sea, necesito recorrer mi array de objetos, objeto por objeto. siendo animeList mi array y anime mi objeto. o sea, siendo animeList mi lista de pelis, y anime cada peli de la lista.
+    for (const anime of animeList) {
+        // Ahora voy a crear  una variable const para los objetos de mi array, pero el objetivo es pintar esos objetos(las pelis), en mi html. Sin olvidarme que tratare a los objetos uno por uno x eso uso el singular x eso digo anime de animelist. entonces dentro de mi const animeHTML pondré un div donde se mostrará la imagen y el titulo de cada peli. y cuando digo  anime.images o anime.title, me refiero al objeto en si, que cuando la usuaria ponga por ejemplo en el searchText "patata" esto sea, patata.images y patata.title y así con cada peli. y se mostrará la imagen y el titulo de la peli que la usuaria haya buscado.
+        const animeHTML = `
+            <div class="anime-card">
+                <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
+                <h3>${anime.title}</h3>
+            </div>
+        `;
+  //Ahora voy a coger mi variable const de resultContainer (que es donde muestro el resultado de la busqueda), y aqui dentro del bucle la uso porque necesito que cada peli(anime) que recorro en la lista de pelis(animeList) se vaya añadiendo a la web sin borrar las de antes(por esto uso el +=, para que las cards se acumulen sin borrar las anteriores). Como animeHTML contiene la estructura de cada peli, cada vez que el bucle pasa por una peli nueva, esa "card" se añade al div resultsContainer mostrandola.
+        resultsContainer.innerHTML += animeHTML;
+    }
+}
