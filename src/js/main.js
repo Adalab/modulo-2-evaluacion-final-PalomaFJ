@@ -4,6 +4,10 @@
 const form = document.querySelector(".js-form");
 const input = document.querySelector(".js-search-input");
 const searchBtn = document.querySelector(".js-search-btn");
+// Voy a seleccionar el container que usaré para mi sección de favoritas en una variable const
+const favoriteContainer = document.querySelector(".js-favorites");
+//Ahora escribir una variable let para crear un array vacio y meter ahí las series favoritas
+let favoritesAanimes = [];
 
 //  ahora voy a crear una función que se ejecutará cuando la usuaria haga click y la voy a llamar handleSearch xq es una funcion manejadora que se ejecutara con un evento que sucedera cuando la usuaria haga click en el boton buscar.Además voy a usar preven.default para evitar que se recargue la página. (escribo event en el parámetro de la funcion xq si no no serviría de nada el prevent.default)
 function handleSearch(event) {
@@ -51,7 +55,7 @@ function renderAnimeList(animeList) {
     for (const anime of animeList) {
         
         const animeHTML = `
-            <div class="anime-card">
+            <div class="anime-card js-anime-card">
                 <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
                 <h3>${anime.title}</h3>
             </div>
@@ -59,8 +63,17 @@ function renderAnimeList(animeList) {
 
         resultsContainer.innerHTML += animeHTML;
     }
-}
-// Vale, ahora quiero "modificar" mi funcion fetchAnime para que llame a mi funcion renderAnimeList y me aparezcan las pelis en la web. y para ello me voy a ir a donde hice mi funcion ftechAnime y voy a llamar a renderAnimeList pasandole el parámetro data.data xq lo que quiero conseguir con esto e es que, después de haber recibido los datos de la API en fetchAnime, le paso a renderAnimeList la lista de pelis que me ha dado la API. Entonces renderAnimeList puede coger esa lista de pelis (data.data), recorrerla y pintar cada peli en la web.
+    //Aquí voy a empezar a desarrollar lo del click en las series favoritas y para ello voy a seleccionar todas las "cards" guardandolas en una variable const, y uso document.querySelectorAll xq estas cards  aparecen en la web  cuando la usuaria ya las ha buscado. Ahora bien, como quiero que todas las cards escuhen el click (de favorito) voy a hacer un bucle for of para recorrer cada una, y es aquí donde quiero escuchar el evento de click en cada una de ellas además voy a hacer una funcion anonima en este evento xq no necesito nombrarla, solo necesito que suceda aquí en este evento. o sea cuando suceda el evento.
+    const animeCards = document.querySelectorAll(".js-anime-card");
 
-//Vale llegada hasta aquí me pasa una cosa y es que cuando abro la pagina y sin escribir nada en el inptu hago click en buscar, se pintan todas las pelis del API en mi web. Entonces ahora voy a intentar solucionar esto o al menos ver que pasa. voy a hacer un console.log de handlesearch. ok ya lo he hecho y funciona. ahora voy a hacer console.log de fetchAnime. ok funciona bien. Voy a investigar como se soluciona esto xq no quiero que se haga la peticion al servidor solo con clickar buscar si no se ha escrito nada. vale he escrito una condicion y ya si el inptu esta vacio aunque clike en buscar no me hace la peticion. bien!!! 
-// Bueno ahora quiero marcar algunas pelis como favoritas
+    for (const card of animeCards) {
+        card.addEventListener("click", function () {
+            console.log("Has hecho clic en un anime");
+        });
+    
+}
+// Vale, ahora quiero "modificar" mi funcion fetchAnime para que llame a mi funcion renderAnimeList y me aparezcan las pelis en la web cuando se realixe la peticion al servidor,(que para eso hice fetch). y para ello me voy a ir a donde hice mi funcion ftechAnime y voy a llamar a renderAnimeList pasandole el parámetro data.data xq lo que quiero conseguir con esto e es que, después de haber recibido los datos de la API en fetchAnime, le paso a renderAnimeList la lista de series que me ha dado la API. Entonces renderAnimeList puede coger esa lista de series (data.data), recorrerla y pintar cada serie en la web.
+
+//Vale llegada hasta aquí me pasa una cosa y es que cuando abro la pagina y sin escribir nada en el inptu hago click en buscar, se pintan todas las series del API en mi web. Entonces ahora voy a intentar solucionar esto o al menos ver que pasa. voy a hacer un console.log de handlesearch. ok ya lo he hecho y funciona. ahora voy a hacer console.log de fetchAnime. ok funciona bien. Voy a investigar como se soluciona esto xq no quiero que se haga la peticion al servidor solo con clickar buscar si no se ha escrito nada. vale he escrito una condicion y ya si el input esta vacio aunque clike en buscar no me hace la peticion. bien!!! 
+
+// Bueno ahora quiero marcar algunas series como favoritas. Entonces lo que quiero es que si la usuaria hace click en alguna de las pelis, esta serie se marque como favorita y se pinte en la seccion de series favoritas y además quiero que las series marcadas en favoritas se guarden en el localstorage y se mantengan al recargar la página. Así que, voy a empezar por seleccionar el aside de mi html que creé para que fuera la sección favoritas y lo seleccionaré en una variable const, y luego crearé una variable let con un array vacio para guardar ahí las series favoritas. Vale, ahora mi siguiente paso es, saber cuando la usuaria hace click en una de las series, o sea necesito saber que serie ha clikado y para esto voy a usar un evento. donde lo hago? pues en renderAnimeList, que es donde se pintan las series. Así que me voy ahí arriba a hacer este evento.
