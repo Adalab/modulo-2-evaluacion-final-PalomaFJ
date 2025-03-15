@@ -7,7 +7,7 @@ const searchBtn = document.querySelector(".js-search-btn");
 // Voy a seleccionar el container que usaré para mi sección de favoritas en una variable const
 const favoriteContainer = document.querySelector(".js-favorites");
 //Ahora escribir una variable let para crear un array vacio y meter ahí las series favoritas
-let favoritesAanimes = [];
+let favoritesAnimes = [];
 
 //  ahora voy a crear una función que se ejecutará cuando la usuaria haga click y la voy a llamar handleSearch xq es una funcion manejadora que se ejecutara con un evento que sucedera cuando la usuaria haga click en el boton buscar.Además voy a usar preven.default para evitar que se recargue la página. (escribo event en el parámetro de la funcion xq si no no serviría de nada el prevent.default)
 function handleSearch(event) {
@@ -42,36 +42,46 @@ function fetchAnime(searchText) {
 
 // Ahora quiero mostrar los resultados en la pantalla y como ya tengo los datos del API voy a pintarlos en la web. Quiero que cada peli tenga su imagen y su titulo. Tambien quiero que no se pinte una peli encima de otra en el div de resultado, o sea que se limpie entre una busqueda y otra.
 
-// Ahora voy a selecionar el contenedor donde voy a mostrar el resultado. Que es el div con la clase js-results asi que lo recojo en una variable const que voy a llamar resultContainer. Y ahí es donde apareceran las pelis cuando la usuaria busque.
+// Ahora voy a selecionar el contenedor donde voy a mostrar el resultado. Que es el div con la clase js-results asi que lo recojo en una variable const que voy a llamar resultContainer. Y ahí es donde apareceran las series cuando la usuaria busque.
 const resultsContainer = document.querySelector(".js-results");
 
 // Ahora voy a crear una funcion a la que voy a llamar renderAnimeList, para que pinte las pelis  y le añadiré el parámetro animeList(que será la lista de pelis que me dió la API) Osea, que renderAnimeList es la funcion que quiero que me pinte la peli buscada.
 function renderAnimeList(animeList) {
+    /*console.log("funcionando?",animeList);*///si funciona bien
     resultsContainer.innerHTML = ""; // Esto lo hago para limpiar el div donde muestro los reultados de la busqueda. O sea, que si busco la peli patata se mostrará la peli patata, pero si luego busco la peli tomate gracias a esto se borra el resultado de patata y ya aparece el de tomate. y así no se me pone una peli encima de otra.
 
-// Ahora voy a usar un bucle for of porque necesito recorrer cada peli una por una para poder pintarla en la web cuando la usuaria la busque. o sea, necesito recorrer mi array de objetos, objeto por objeto. siendo animeList mi array y anime mi objeto. o sea, siendo animeList mi lista de pelis, y anime cada peli de la lista.
+// Ahora voy a usar un bucle for of porque necesito recorrer cada serie una por una para poder pintarla en la web cuando la usuaria la busque. o sea, necesito recorrer mi array de objetos, objeto por objeto. siendo animeList mi array y anime mi objeto. o sea, siendo animeList mi lista de series, y anime cada serie de la lista. Dentro de este bucle voy a crear una variable const que se llame animeHTML ¿xq? porque la voy a usar como un aespecie de bloque donde meteré el código html que pinte cada card de cada serie. y es ahí donde meto el div que pinta cada serie con su titulo y su imagen. Entonces en resultContainer mostrará mi animeHTML con su imagen y su ttulo (card de la serie)
 
 // Vale Ahora quiero solucionar un problema que ocurre cuando una peli no tiene imagen y para ello voy a usar una imagen azul que yo he elegido y descargado de otra web. Entonces voy a 
+/*console.log("saber cuantas series", animeList.length);*/ //si funciona bien
     for (const anime of animeList) {
         
         const animeHTML = `
-            <div class="anime-card js-anime-card">
-                <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
-                <h3>${anime.title}</h3>
-            </div>
-        `;
+        <div class="anime-card js-anime-card" data-id="${anime.mal_id}">
+            <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
+            <h3>${anime.title}</h3>
+        </div>
+    `;
 
         resultsContainer.innerHTML += animeHTML;
     }
-    //Aquí voy a empezar a desarrollar lo del click en las series favoritas y para ello voy a seleccionar todas las "cards" guardandolas en una variable const, y uso document.querySelectorAll xq estas cards  aparecen en la web  cuando la usuaria ya las ha buscado. Ahora bien, como quiero que todas las cards escuhen el click (de favorito) voy a hacer un bucle for of para recorrer cada una, y es aquí donde quiero escuchar el evento de click en cada una de ellas además voy a hacer una funcion anonima en este evento xq no necesito nombrarla, solo necesito que suceda aquí en este evento. o sea cuando suceda el evento.
-    const animeCards = document.querySelectorAll(".js-anime-card");
+    /*console.log("a ver si esto funciona", resultsContainer.innerHTML);*/// si funciona bien
+
+ //Aquí voy a empezar a desarrollar lo del click en las series favoritas y para ello voy a seleccionar todas las "cards" guardandolas en una variable const, y uso document.querySelectorAll xq estas cards  aparecen en la web  cuando la usuaria ya las ha buscado(para esto voy a necesitar añadir una clase js al div que tengo dentro de const ainmeHTML). Ahora bien, como quiero que todas las cards escuhen el click (de favorito) voy a hacer un bucle for of para recorrer cada una, y es aquí donde quiero escuchar el evento de click en cada una de ellas además voy a hacer una funcion manejadora a la que llamaré handleFavoritesClick y dentro de esta funcion manejadora voyy a usar event.currentTarget.dataset.id para saber el ID de la card donde la usuaria hizo click(y esto lo voy a meter en una variable const que voy a llamar animeId,(esto lo hago asi para volver a usarlo de manera mas corta).Vale he comprobado que el evento se escucha cuando clika en una serie. 
+// Entonces ahora quiero saber la serie que ha clikado. Como cada serie tiene un ID propio (que me da la API)(veo en JSON que el ID esta recogido en un objeto que se llama "mal_id"). Yo quiero que se recoja cada ID en un sitio y para eso usaré data-id(que justo lo escribí en el div de la const animeHTML xq es el sitio donde está la información que necesito de cada serie, su imagen, su titulo y su ID) y cuando la usuaria haga click  en una card podré saber cual ha seleccionado. Vale, ahora ya cuando la usuaria clika una serie a mi me aparece en consola el evento y el id, por lo que todo correcto hasta aquí.
+//Entonces ahora lo que quiero hacer esañadir esa serie clikada a favoritas
+
+    const animeCards = document.querySelectorAll(".js-anime-card")
 
     for (const card of animeCards) {
-        card.addEventListener("click", function () {
-            console.log("Has hecho clic en un anime");
-        });
-    
+        card.addEventListener("click", handleFavoritesClick);
+    }
 }
+function handleFavoritesClick(event) {
+    const animeId = event.currentTarget.dataset.id;
+    /*console.log("has clikado aqui pillina", animeId);*/// siiiiii por fin funciona!!!!!
+}
+
 // Vale, ahora quiero "modificar" mi funcion fetchAnime para que llame a mi funcion renderAnimeList y me aparezcan las pelis en la web cuando se realixe la peticion al servidor,(que para eso hice fetch). y para ello me voy a ir a donde hice mi funcion ftechAnime y voy a llamar a renderAnimeList pasandole el parámetro data.data xq lo que quiero conseguir con esto e es que, después de haber recibido los datos de la API en fetchAnime, le paso a renderAnimeList la lista de series que me ha dado la API. Entonces renderAnimeList puede coger esa lista de series (data.data), recorrerla y pintar cada serie en la web.
 
 //Vale llegada hasta aquí me pasa una cosa y es que cuando abro la pagina y sin escribir nada en el inptu hago click en buscar, se pintan todas las series del API en mi web. Entonces ahora voy a intentar solucionar esto o al menos ver que pasa. voy a hacer un console.log de handlesearch. ok ya lo he hecho y funciona. ahora voy a hacer console.log de fetchAnime. ok funciona bien. Voy a investigar como se soluciona esto xq no quiero que se haga la peticion al servidor solo con clickar buscar si no se ha escrito nada. vale he escrito una condicion y ya si el input esta vacio aunque clike en buscar no me hace la peticion. bien!!! 
