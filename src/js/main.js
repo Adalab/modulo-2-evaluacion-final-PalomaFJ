@@ -4,12 +4,20 @@
 const form = document.querySelector(".js-form");
 const input = document.querySelector(".js-search-input");
 const searchBtn = document.querySelector(".js-search-btn");
+const resetBton = document.querySelector(".js-reset-btn")
 
 let animeList = [];// esta variable let vacia es para guardar mi lista de series(animes)
 // Voy a seleccionar el container que usaré para mi sección de favoritas en una variable const
 const favoriteContainer = document.querySelector(".js-favorites");
 //Ahora escribir una variable let para crear un array vacio y meter ahí las series favoritas
 let favoritesAnimes = [];
+
+// esto lo hago para recuperar favoritos de localStorage al cargar la pagina
+const storedFavorites = localStorage.getItem("favorites");
+if (storedFavorites) {
+    favoritesAnimes = JSON.parse(storedFavorites);
+    renderFavorites(); // Volver a pintar favoritos guardados
+}
 
 //  ahora voy a crear una función que se ejecutará cuando la usuaria haga click y la voy a llamar handleSearch xq es una funcion manejadora que se ejecutara con un evento que sucedera cuando la usuaria haga click en el boton buscar.Además voy a usar preven.default para evitar que se recargue la página. (escribo event en el parámetro de la funcion xq si no no serviría de nada el prevent.default)
 function handleSearch(event) {
@@ -24,6 +32,15 @@ function handleSearch(event) {
 
 // ahora voy a hacer el addEventListener para escuchar el evento sobre el boton de buscar y entre los parentesis le paso el tipo de evento, o sea click, y seguidamente de una coma pongo el nombre de la funcion(invocar la funcion) que cree para esto. o sea, handleSearch
 searchBtn.addEventListener("click", handleSearch);
+//ahora voy a hacer funcionar el boton de reset quitando los resultados de la busqueda, los favortitos, y yodo del localstorage.
+function handleReset() {
+    animeList = [];
+    favoritesAnimes = [];
+    localStorage.removeItem("favorites");
+    renderAnimeList();
+    renderFavorites();
+}
+resetBton.addEventListener("click", handleReset);
 
 // Vale, ahora quiero "modificar" mi funcion fetchAnime para que llame a mi funcion renderAnimeList y me aparezcan las pelis en la web cuando se realixe la peticion al servidor,(que para eso hice fetch). y para ello me voy a ir a donde hice mi funcion ftechAnime y voy a llamar a renderAnimeList pasandole el parámetro data.data xq lo que quiero conseguir con esto e es que, después de haber recibido los datos de la API en fetchAnime, le paso a renderAnimeList la lista de series que me ha dado la API. Entonces renderAnimeList puede coger esa lista de series (data.data), recorrerla y pintar cada serie en la web.
 
@@ -62,9 +79,23 @@ function renderAnimeList(animeList) {
     /*console.log("saber cuantas series", animeList.length);*/ //si funciona bien
     for (const anime of animeList) {
 
+        let imgUrl = anime.images.jpg.image_url;
+        if (imgUrl === "https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png")
+            imgUrl = "https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
+
+        let animeClass = "anime-card js-anime-card"
+        if (favoritesAnimes.find(animeFav => animeFav.mal_id === anime.mal_id)) {
+            animeClass += " fav-anime-card"
+        }
+        // esto lo hago para comprobar si el anime esta e favoritas y se me ponga el borde y el titulo en azul.
+
+
+
+
+
         const animeHTML = `
-        <div class="anime-card js-anime-card" data-id="${anime.mal_id}">
-            <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
+        <div class="${animeClass}" data-id="${anime.mal_id}">
+            <img src="${imgUrl}" alt="${anime.title}">
             <h3>${anime.title}</h3>
         </div>
     `;
@@ -92,16 +123,33 @@ function renderAnimeList(animeList) {
 }
 function handleFavoritesClick(event) {
     const animeId = event.currentTarget.dataset.id;
+    if (favoritesAnimes.find(animeFav => animeFav.mal_id === parseInt(animeId)))
+        return; //esto lo hago para que no se me repita la serie favorita si la cliko otra vez
+
     const clickedAnime = animeList.find(anime => anime.mal_id === parseInt(animeId));
-   // aqui pongo la serie en favoritas con push
+    // aqui pongo la serie en favoritas con push
     favoritesAnimes.push(clickedAnime);
-   // aqui pinto la serie en la favoritas
-    favoriteContainer.innerHTML += `
-        <div class="anime-card js-favorite-card" data-id="${clickedAnime.mal_id}">
-            <img src="${clickedAnime.images.jpg.image_url}" alt="${clickedAnime.title}">
-            <h3>${clickedAnime.title}</h3>
-        </div>
-    `;
+
+    //añado aqui la clase de favoritos al elemeto clikado
+    event.currentTarget.classList.add("fav-anime-card");
+
+    localStorage.setItem("favorites", JSON.stringify(favoritesAnimes));
+
+    renderFavorites();
+
 }
+// aqui voy a crear una funcion para pintar las series favoritas. a esto me he visto obligada al querer guardar las favoritas en el localstorage.
+function renderFavorites() {
+    favoriteContainer.innerHTML = ""; // Limpia la lista antes de volver a pintarla
+    for (const anime of favoritesAnimes) {
+        favoriteContainer.innerHTML += `
+            <div class="anime-card js-favorite-card" data-id="${anime.mal_id}">
+                <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
+                <h3>${anime.title}</h3>
+            </div>
+        `;
+    }
+}
+
 // ok llegada hasta qui quiero guardar las series marcadas como favoritas en el localstorage y que se queden ahi aunque recargue la pagina. y para esto me voy a ir al final de mi cuncion handleFavoritesClick 
 
