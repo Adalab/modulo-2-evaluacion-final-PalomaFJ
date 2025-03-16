@@ -32,7 +32,7 @@ function handleSearch(event) {
 
 // ahora voy a hacer el addEventListener para escuchar el evento sobre el boton de buscar y entre los parentesis le paso el tipo de evento, o sea click, y seguidamente de una coma pongo el nombre de la funcion(invocar la funcion) que cree para esto. o sea, handleSearch
 searchBtn.addEventListener("click", handleSearch);
-//ahora voy a hacer funcionar el boton de reset quitando los resultados de la busqueda, los favortitos, y yodo del localstorage.
+//ahora voy a hacer funcionar el boton de reset quitando los resultados de la busqueda, los favortitos, y yodo del localstorage. creo una funcion y dentro le meto todo lo que quiero que me borre el boton reset, 
 function handleReset() {
     animeList = [];
     favoritesAnimes = [];
