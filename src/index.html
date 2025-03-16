@@ -1,41 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    <header>
-        <h1>Encuentra tus pelis frikis más chulas</h1>
-    </header>
-
-    <main>
-        <!-- formulario para buscar -->
-        <section>
-            <form class="js-form">
-                <input type="text" class="js-search-input" placeholder="Escribe tu película">
-                <button class="js-search-btn">Buscar</button>
-            </form>
-        </section>
-
-        <!-- Contenedor principal  -->
-        <section class="container">
-            <!-- Resultados de búsqueda -->
-            <div class="js-results">
-                <!-- Aquí pogo resultados de la búsqueda -->
-            </div>
-
-            <!--  esto pa las series favoritas -->
-            <aside class="js-favorites">
-                <h2>Tus series favoritas</h2>
-                <ul class="js-fav-list">
-                    <!-- Aquí voy a poner las series favorits -->
-                </ul>
-            </aside>
-        </section>
-    </main>
-
+    <load src="./partials/header.html" />
+    <load src="./partials/search.html" />
+    <load src="./partials/favorites.html" />
+    
     <script src="./js/main.js"></script>
 </body>
+
 </html>
